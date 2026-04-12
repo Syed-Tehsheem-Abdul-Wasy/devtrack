@@ -1,0 +1,491 @@
+Py
+✦  CAPSTONE PROJECT  ✦
+DevTrack
+Project Management
+API
+Build a real-world developer productivity backend
+using Python, FastAPI & UV/UVX
+COURSE
+Python + FastAPI
+LEVEL
+Intermediate
+DURATION
+5–7 Days
+POINTS
+100 Points
+In this capstone you will architect and ship DevTrack — a RESTful API that lets
+development teams manage projects, tasks, and progress tracking. Apply modern Python
+tooling (UV/UVX), async FastAPI patterns, JWT authentication, SQLModel + PostgreSQL, and
+deploy to Railway.
+TECH STACK:
+Python 3.12+
+FastAPI
+UV/UVX
+SQLModel
+PostgreSQL
+JWT
+Railway
+5
+Phases
+100
+Total Points
+7
+Days
+15+
+API Endpoints
+SMIT — Saylani Mass IT Training Program
+Python + FastAPI Track  |  2025
+
+DevTrack — Python + FastAPI Capstone
+SMIT Python Track  |  2025
+Saylani Mass IT Training Program  ·  Python + FastAPI Track
+Page 2
+01
+Project Overview
+What you will build and why
+DevTrack is a RESTful API for development teams to manage projects, tasks, and productivity metrics — think
+lightweight Jira backend built entirely by you, from zero to production deployment.
+This project tests your ability to design clean API architecture, model a relational database with SQLModel,
+secure every endpoint with JWT, and ship a production-ready app using modern Python tooling.
+■  Your North Star
+A recruiter should be able to clone your repo, run `uv run fastapi dev` and see a working API with
+Swagger docs in under 2 minutes. Build to that standard.
+Core Entities
+Entity
+Description
+Key Fields
+User
+A registered developer/team member
+id, name, email, hashed_password, role
+Project
+A software project container
+id, name, description, owner_id, status, created_at
+Task
+A unit of work inside a project
+id, title, project_id, assignee_id, priority, status
+Comment
+Discussion on a task
+id, task_id, author_id, content, created_at
+API Endpoint Map
+Method
+Endpoint
+Auth
+Description
+POST
+/auth/register
+Public
+Register a new user
+POST
+/auth/login
+Public
+Login and receive JWT token
+GET
+/users/me
+Required
+Get current user profile
+POST
+/projects/
+Required
+Create a new project
+GET
+/projects/
+Required
+List projects (owner or member)
+GET
+/projects/{id}
+Required
+Get single project details
+PUT
+/projects/{id}
+Owner
+Update project info
+DELETE
+/projects/{id}
+Owner
+Delete a project
+POST
+/projects/{id}/tasks/
+Required
+Create task in a project
+GET
+/projects/{id}/tasks/
+Required
+List all tasks (optional ?status= filter)
+PUT
+/tasks/{id}
+Assignee/Owner
+Update task status or details
+DELETE
+/tasks/{id}
+Owner
+Delete a task
+POST
+/tasks/{id}/comments/
+Required
+Add comment to a task
+GET
+/tasks/{id}/comments/
+Required
+List comments on a task
+
+DevTrack — Python + FastAPI Capstone
+SMIT Python Track  |  2025
+Saylani Mass IT Training Program  ·  Python + FastAPI Track
+Page 3
+Method
+Endpoint
+Auth
+Description
+* Auth: Public = no token needed  |  Required = JWT Bearer token  |  Owner = project creator only
+02
+Setup & Tech Stack
+UV/UVX, FastAPI, SQLModel, and tooling
+Why UV/UVX?
+UV is a next-generation Python package manager written in Rust. It replaces pip, pip-tools, virtualenv, and pyenv
+in a single blazing-fast binary — 10–100× faster than pip. In 2025, UV/UVX is the industry default for professional
+Python projects.
+Project Initialization
+# Install UV (one-time)
+curl -LsSf https://astral.sh/uv/install.sh | sh
+# Create project
+uv init devtrack
+cd devtrack
+# Add runtime dependencies
+uv add fastapi[standard] sqlmodel psycopg2-binary
+uv add python-jose[cryptography] passlib[bcrypt] python-dotenv
+# Add dev dependencies
+uv add --dev pytest pytest-asyncio httpx ruff
+# Run the development server
+uv run fastapi dev app/main.py
+
+DevTrack — Python + FastAPI Capstone
+SMIT Python Track  |  2025
+Saylani Mass IT Training Program  ·  Python + FastAPI Track
+Page 4
+Required Project Structure
+devtrack/
+■■■ pyproject.toml          # UV project config
+■■■ .env                    # Environment variables (gitignored!)
+■■■ README.md               # Setup + API docs
+■■■ app/
+    ■■■ main.py             # FastAPI app entry point
+    ■■■ config.py           # Settings (Pydantic BaseSettings)
+    ■■■ database.py         # Engine + session dependency
+    ■■■ models/             # SQLModel table models
+    ■   ■■■ user.py
+    ■   ■■■ project.py
+    ■   ■■■ task.py
+    ■■■ schemas/            # Pydantic request/response schemas
+    ■■■ routers/            # FastAPI routers (one per entity)
+    ■   ■■■ auth.py
+    ■   ■■■ projects.py
+    ■   ■■■ tasks.py
+    ■■■ core/
+        ■■■ security.py     # JWT creation + verification
+        ■■■ dependencies.py # get_current_user dependency
+Environment Variables (.env)
+DATABASE_URL=postgresql://postgres:password@localhost:5432/devtrack
+SECRET_KEY=your-super-secret-key-change-this-in-production
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+■  Security Rule
+NEVER commit your .env file — add it to .gitignore on day one. Generate a strong SECRET_KEY with:
+python -c "import secrets; print(secrets.token_hex(32))"
+Technology Stack
+Layer
+Tool / Library
+Purpose
+Package Manager
+UV + UVX
+Project setup, dependency management, virtual env
+Web Framework
+FastAPI 0.110+
+Routes, dependency injection, auto Swagger docs
+ORM / Models
+SQLModel
+Database models + Pydantic schemas unified
+Database
+PostgreSQL
+Relational data storage
+Auth
+python-jose + passlib
+JWT token creation, password hashing (bcrypt)
+Validation
+Pydantic v2
+Request / response data validation (built-in)
+Testing
+pytest + httpx
+Unit and integration tests
+Linting
+Ruff
+Ultra-fast linter (replaces flake8 + isort)
+Deployment
+Railway
+Cloud hosting with Postgres add-on
+
+DevTrack — Python + FastAPI Capstone
+SMIT Python Track  |  2025
+Saylani Mass IT Training Program  ·  Python + FastAPI Track
+Page 5
+03
+Project Phases & Rubric
+Step-by-step build plan with point allocation
+1
+Setup & Foundation
+20 pts
+Initialize project with UV, create GitHub repo, first commit
+[4 pts]
+Configure PostgreSQL connection (DATABASE_URL via .env)
+[4 pts]
+Create SQLModel models: User, Project, Task, Comment
+[6 pts]
+Run create_all to create tables, verify in DB client
+[3 pts]
+FastAPI app starts with `uv run fastapi dev`, /docs visible
+[3 pts]
+2
+Authentication System
+20 pts
+POST /auth/register — hash password with bcrypt, store user
+[6 pts]
+POST /auth/login — verify password, return JWT access token
+[6 pts]
+GET /users/me — protected route, decode token, return user
+[4 pts]
+Custom HTTPException 401 responses for unauthorized access
+[4 pts]
+3
+Project Management
+25 pts
+POST /projects/ — create project, auto-set owner_id from token
+[5 pts]
+GET /projects/ — list projects (owner or member)
+[5 pts]
+GET /projects/{id} — single project with 404 handling
+[5 pts]
+PUT /projects/{id} — update (owner only), return updated data
+[5 pts]
+DELETE /projects/{id} — delete (owner only) with cascade
+[5 pts]
+4
+Task & Comment System
+25 pts
+POST /projects/{id}/tasks/ — create task with priority + status
+[5 pts]
+GET /projects/{id}/tasks/ — list with optional ?status= filter
+[5 pts]
+PUT /tasks/{id} — update status: To Do / In Progress / Done
+[5 pts]
+DELETE /tasks/{id} — only owner or assignee can delete
+[5 pts]
+POST + GET /tasks/{id}/comments/ — threaded task comments
+[5 pts]
+5
+Deployment & Documentation
+10 pts
+Deploy to Railway with PostgreSQL add-on (live URL required)
+[5 pts]
+README.md: setup guide, .env.example, and all endpoint examples
+[3 pts]
+At least 5 pytest tests (register, login, create project, task)
+[2 pts]
+
+DevTrack — Python + FastAPI Capstone
+SMIT Python Track  |  2025
+Saylani Mass IT Training Program  ·  Python + FastAPI Track
+Page 6
+■  Grading Notes
+Partial credit is awarded per task. A working endpoint with no auth check earns half points. Code
+that crashes on import earns zero. Always test in Swagger UI (/docs) before submitting.
+04
+Key Concepts & Code Patterns
+Study these before you start coding
+SQLModel — Unified Model + Schema
+SQLModel lets you define one class that serves as both the SQLAlchemy table and a Pydantic validation
+schema. Use table=True for DB models and create separate Input/Output schemas by inheriting from the base
+class.
+from sqlmodel import SQLModel, Field
+from typing import Optional
+from datetime import datetime
+class TaskBase(SQLModel):
+    title: str = Field(min_length=1, max_length=200)
+    description: Optional[str] = None
+    priority: str = Field(default="medium")  # low | medium | high
+    status: str = Field(default="todo")      # todo | in_progress | done
+class Task(TaskBase, table=True):            # ← DB table
+    id: Optional[int] = Field(default=None, primary_key=True)
+    project_id: int = Field(foreign_key="project.id")
+    assignee_id: Optional[int] = Field(default=None, foreign_key="user.id")
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+class TaskCreate(TaskBase): pass             # ← POST body schema
+class TaskRead(TaskBase):                    # ← Response schema
+    id: int
+    project_id: int
+    created_at: datetime
+JWT Authentication Flow
+
+DevTrack — Python + FastAPI Capstone
+SMIT Python Track  |  2025
+Saylani Mass IT Training Program  ·  Python + FastAPI Track
+Page 7
+from jose import jwt, JWTError
+from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
+def create_access_token(data: dict) -> str:
+    to_encode = data.copy()
+    expire = datetime.utcnow() + timedelta(minutes=settings.token_expire)
+    to_encode.update({"exp": expire})
+    return jwt.encode(to_encode, settings.secret_key, algorithm=settings.algorithm)
+def get_current_user(
+    token: str = Depends(oauth2_scheme),
+    session: Session = Depends(get_session)
+) -> User:
+    exc = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Invalid or expired token",
+        headers={"WWW-Authenticate": "Bearer"}
+    )
+    try:
+        payload = jwt.decode(token, settings.secret_key,
+                             algorithms=[settings.algorithm])
+        user_id = int(payload.get("sub"))
+    except (JWTError, TypeError):
+        raise exc
+    user = session.get(User, user_id)
+    if not user: raise exc
+    return user
+FastAPI Router Pattern
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlmodel import Session, select
+router = APIRouter(prefix="/projects", tags=["Projects"])
+@router.post("/", response_model=ProjectRead, status_code=201)
+def create_project(
+    project_in: ProjectCreate,
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user)
+):
+    project = Project(**project_in.model_dump(), owner_id=current_user.id)
+    session.add(project)
+    session.commit()
+    session.refresh(project)   # ← always refresh after commit!
+    return project
+# Register in main.py:
+app.include_router(projects_router)
+
+DevTrack — Python + FastAPI Capstone
+SMIT Python Track  |  2025
+Saylani Mass IT Training Program  ·  Python + FastAPI Track
+Page 8
+■  Tip: Always call session.refresh()
+After session.commit(), call session.refresh(obj) to reload server-generated values (id,
+created_at). Returning a stale object causes validation errors or missing fields.
+05
+Submission Requirements
+What to hand in and how
+Deliverables Checklist
+ 1
+GitHub Repository
+Public repo named devtrack. All code committed. .env file is gitignored.
+ 2
+Live API URL
+Deployed on Railway. Swagger UI (/docs) must load publicly.
+ 3
+README.md
+Setup steps, .env.example, sample API calls with curl or HTTPie.
+ 4
+Video Demo (2–3 min)
+Screen-recording: register → login → create project → task → deploy URL.
+ 5
+Test Results
+Run `uv run pytest -v` and screenshot the passing test output.
+Scoring & Grading
+Phase
+Focus Area
+Pts
+Phase 1
+Setup & Foundation
+20
+Phase 2
+Authentication System
+20
+Phase 3
+Project Management
+25
+Phase 4
+Task & Comment System
+25
+Phase 5
+Deployment & Docs
+10
+TOTAL
+100
+Grade
+Score
+Description
+A — Excellent
+90–100
+All phases complete, clean code, live deployment
+B — Good
+75–89
+Core API works, minor issues in auth or README
+C — Satisfactory
+60–74
+Basic CRUD works, auth missing or broken
+D — Needs Work
+40–59
+Partial implementation, major features missing
+F — Incomplete
+0–39
+Not started, crashes, or plagiarized
+
+DevTrack — Python + FastAPI Capstone
+SMIT Python Track  |  2025
+Saylani Mass IT Training Program  ·  Python + FastAPI Track
+Page 9
+06
+Academic Integrity & Pro Tips
+How to succeed and what not to do
+■■  Academic Integrity Policy
+You may reference FastAPI docs, SQLModel docs, and online tutorials. You may NOT copy another
+student's code or submit AI-generated code you don't understand. If asked, you must explain any line
+of your code. Violations result in a zero for the entire capstone.
+Pro Tips From the Industry
+ Read the FastAPI docs first. — The official tutorial at fastapi.tiangolo.com covers 80% of what you need.
+Spend 2 hours before writing a single line.
+ Commit early, commit often. — Push to GitHub after every phase. If something breaks, you can roll back.
+Employers look at commit history.
+ Test in Swagger UI as you build. — FastAPI auto-generates /docs. Use it after every endpoint. Don't wait
+until the end to discover broken routes.
+ Never hard-code credentials. — All secrets go in .env. Use Pydantic BaseSettings to load them. This is
+non-negotiable in real projects.
+ Return proper HTTP status codes. — 404 for not-found, 403 for forbidden, 400 for bad input. A 200
+response for a missing resource is a fail.
+ Write your README for a stranger. — Can someone with no context clone and run it in 5 minutes? If not,
+improve the README.
+ Deploy by end of Phase 3. — Railway deployment takes time to debug. Don't leave it to the last hour before
+submission.
+Useful Resources
+Resource
+URL
+FastAPI Official Docs
+fastapi.tiangolo.com
+SQLModel Docs
+sqlmodel.tiangolo.com
+UV Documentation
+docs.astral.sh/uv
+Pydantic v2 Docs
+docs.pydantic.dev/latest
+Railway Deployment
+docs.railway.app
+JWT Debugger
+jwt.io
+Python-Jose Library
+github.com/mpdavis/python-jose
+ Build something you're proud to show a recruiter. Good luck!
+
+DevTrack — Python + FastAPI Capstone
+SMIT Python Track  |  2025
+Saylani Mass IT Training Program  ·  Python + FastAPI Track
+Page 10
+ Saylani Mass IT Training Program · Python + FastAPI Track · 2025
