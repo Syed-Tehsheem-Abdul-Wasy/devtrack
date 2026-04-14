@@ -30,8 +30,10 @@ class Settings(BaseSettings):
     @field_validator("database_url", mode="before")
     @classmethod
     def assemble_db_connection(cls, v: str) -> str:
-        if isinstance(v, str) and v.startswith("postgres://"):
-            return v.replace("postgres://", "postgresql://", 1)
+        if isinstance(v, str):
+            v = v.strip()
+            if v.startswith("postgres://"):
+                return v.replace("postgres://", "postgresql://", 1)
         return v
 
     model_config = SettingsConfigDict(env_file=".env")
